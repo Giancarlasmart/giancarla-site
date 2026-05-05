@@ -3556,20 +3556,22 @@
     const closeBtn = document.getElementById('videoLightboxClose');
     if (!lb || !video) return;
 
+    // Save the original YouTube embed URL to restore on open
+    const youtubeBase = 'https://www.youtube-nocookie.com/embed/VQ7D_g4xYNQ?rel=0&modestbranding=1&playsinline=1';
+    
     function open() {
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      // Try to autoplay with audio. If browser blocks, user can press play.
-      const p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(() => { /* user must click */ });
+      // Reload iframe with autoplay enabled - this triggers YouTube to start playing
+      video.src = youtubeBase + '&autoplay=1';
     }
     function close() {
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      video.pause();
-      video.currentTime = 0;
+      // Clear src to stop YouTube playback completely (audio + video)
+      video.src = '';
     }
 
     document.querySelectorAll('[data-tour-trigger]').forEach(el => {
